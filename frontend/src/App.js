@@ -1,12 +1,12 @@
+const API_URL = "https://my-store-ten-iota.vercel.app/api/products";
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 
-const API_URL = "https://my-store-ten-iota.vercel.app/api/products";
+
 
 function App() {
-  const [products, setProducts] = useState([]); // Hamesha empty array se shuru karein
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]); 
   const [search, setSearch] = useState("");
 
   const fetchProducts = async () => {

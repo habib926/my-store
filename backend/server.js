@@ -4,11 +4,11 @@ const cors = require('cors');
 
 const app = express();
 
-// Middlewares
+// --- SETTINGS ---
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); // Base64 images ke liye limit barha di
+app.use(express.json({ limit: '10mb' }));
 
-// --- DATABASE CONNECTION ---
+// --- DB CONNECTION ---
 const MONGO_URI = "mongodb+srv://admin:admin123@cluster0.xhkedci.mongodb.net/professional_store?retryWrites=true&w=majority";
 
 const connectDB = async () => {
@@ -16,14 +16,16 @@ const connectDB = async () => {
     await mongoose.connect(MONGO_URI);
 };
 
-// --- PRODUCT MODEL ---
+// --- MODEL ---
 const productSchema = new mongoose.Schema({
     name: String, price: Number, image: String, category: String
-});
+}, { timestamps: true });
+
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema, 'products');
 
 // --- ROUTES ---
 
+// 1. Get
 app.get('/api/products', async (req, res) => {
     await connectDB();
     try {
@@ -34,6 +36,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// 2. Post
 app.post('/api/products', async (req, res) => {
     await connectDB();
     try {
@@ -45,7 +48,7 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-// 3. Delete Product
+// 3. Delete
 app.delete('/api/products/:id', async (req, res) => {
     await connectDB();
     try {
@@ -56,8 +59,10 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
-// Local testing ke liye port
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+// Serverless handling
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = 5000;
+    app.listen(PORT, () => console.log(`Local server on ${PORT}`));
+}
 
-module.exports = app; 
+module.exports = app;
