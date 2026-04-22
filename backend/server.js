@@ -3,20 +3,17 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// --- MONGODB ATLAS CONNECTION ---
+// Middlewares
+app.use(cors());
+app.use(express.json({ limit: '10mb' })); // Base64 images ke liye limit barha di
+
+// --- DATABASE CONNECTION ---
 const MONGO_URI = "mongodb+srv://admin:admin123@cluster0.xhkedci.mongodb.net/professional_store?retryWrites=true&w=majority";
 
 const connectDB = async () => {
     if (mongoose.connection.readyState >= 1) return;
-    try {
-        await mongoose.connect(MONGO_URI);
-        console.log("MongoDB Connected ✅");
-    } catch (err) {
-        console.error("DB Error:", err);
-    }
+    await mongoose.connect(MONGO_URI);
 };
 
 // --- PRODUCT MODEL ---
@@ -27,18 +24,16 @@ const Product = mongoose.models.Product || mongoose.model('Product', productSche
 
 // --- ROUTES ---
 
-// 1. Get Products
 app.get('/api/products', async (req, res) => {
     await connectDB();
     try {
         const products = await Product.find().sort({ createdAt: -1 });
-        res.status(200).json(Array.isArray(products) ? products : []);
+        res.status(200).json(products);
     } catch (err) {
-        res.status(500).json([]); // Error ki soorat mein khali array bhejein taake site crash na ho
+        res.status(500).json([]);
     }
 });
 
-// 2. Add Product
 app.post('/api/products', async (req, res) => {
     await connectDB();
     try {
@@ -61,8 +56,8 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
-// Serverless environments mein port zaroori nahi hota lekin local ke liye:
+// Local testing ke liye port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 
-module.exports = app; // VERCEL ISKE BAGHAIR NAHI CHALTA
+module.exports = app; 

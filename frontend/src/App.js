@@ -20,7 +20,7 @@ function App() {
       setLoading(false);
     } catch (err) {
       console.error("Connection Error", err);
-      setProducts([]); // Error ki soorat mein bhi khali list rakhen taake crash na ho
+      setProducts([]); 
       setLoading(false);
     }
   };
