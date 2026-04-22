@@ -6,24 +6,18 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
-// --- CLOUD DATABASE CONNECTION ---
+// --- DB CONNECTION ---
 const MONGO_URI = "mongodb+srv://admin:admin123@cluster0.xhkedci.mongodb.net/professional_store?retryWrites=true&w=majority";
 
 const connectDB = async () => {
     if (mongoose.connection.readyState >= 1) return;
-    try {
-        await mongoose.connect(MONGO_URI);
-        console.log("Cloud Database Connected! ☁️✅");
-    } catch (err) {
-        console.error("DB Connection Error:", err);
-    }
+    await mongoose.connect(MONGO_URI);
 };
 
-// --- PRODUCT MODEL ---
+// --- MODEL ---
 const productSchema = new mongoose.Schema({
     name: String, price: Number, image: String, category: String
-}, { timestamps: true });
-
+});
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema, 'products');
 
 // --- ROUTES ---
@@ -56,14 +50,11 @@ app.delete('/api/products/:id', async (req, res) => {
     await connectDB();
     try {
         await Product.findByIdAndDelete(req.params.id);
-        res.json({ message: "Deleted" });
+        res.status(200).json({ message: "Deleted" });
     } catch (err) {
         res.status(500).json({ error: "Failed" });
     }
 });
 
-// Local testing ke liye
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-
-module.exports = ap
+// Vercel handles the port automatically
+module.exports = app;
