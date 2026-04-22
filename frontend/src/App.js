@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// APKA LIVE BACKEND LINK (Vercel wala)
-const API_URL = "https://my-store-ten-iota.vercel.app/backend-api/api/products";
+
+const API_URL = "https://my-store-ten-iota.vercel.app/api/products";
 
 function App() {
   const [products, setProducts] = useState([]); // Hamesha empty array se shuru karein
@@ -12,11 +12,10 @@ function App() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(API_URL);
-      // Check karein ke data array hai ya nahi
       if (Array.isArray(res.data)) {
         setProducts(res.data);
       } else {
-        setProducts([]); // Agar array nahi hai toh khali list rakhen
+        setProducts([]); 
       }
       setLoading(false);
     } catch (err) {
