@@ -1,4 +1,3 @@
-const API_URL = "https://my-store-ten-iota.vercel.app/api/products";
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
